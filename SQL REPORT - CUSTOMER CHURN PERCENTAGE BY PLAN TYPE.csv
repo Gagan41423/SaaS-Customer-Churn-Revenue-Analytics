@@ -1,0 +1,4 @@
+plan_type,total_customers,total_churned_customers,churn_percentage
+Basic,327,58,17.74
+Pro,343,53,15.45
+Enterprise,330,57,17.27

@@ -1,0 +1,27 @@
+import pandas as pd
+from sqlalchemy import create_engine, text
+
+# 1. Connect to your MySQL database
+engine = create_engine('mysql+pymysql://root:gagan%40285674@localhost/sas_analytics')
+
+# Load your CSV file using a raw string for the path
+df = pd.read_csv(r'C:\Users\gagan\Downloads\archive\customers.csv')
+
+# Format dates to match MySQL requirements (YYYY-MM-DD)
+df['signup_date'] = pd.to_datetime(df['signup_date'], format='%d-%m-%Y').dt.strftime('%Y-%m-%d')
+df['churn_date'] = pd.to_datetime(df['churn_date'], format='%d-%m-%Y', errors='coerce').dt.strftime('%Y-%m-%d')
+
+# Replace NaN/NaT with None so SQL receives proper NULL values
+df['churn_date'] = df['churn_date'].where(df['churn_date'].notnull(), None)
+
+# 2. Temporarily disable foreign key checks, truncate table, and insert data
+with engine.begin() as connection:
+    connection.execute(text("SET FOREIGN_KEY_CHECKS = 0;"))
+    connection.execute(text("TRUNCATE TABLE customers;"))
+    
+    # Use pandas to insert into the existing table without dropping or creating it
+    df.to_sql('customers', con=connection, if_exists='append', index=False, chunksize=500)
+    
+    connection.execute(text("SET FOREIGN_KEY_CHECKS = 1;"))
+
+print("Successfully filled all 1,000 rows into the existing MySQL table!")
