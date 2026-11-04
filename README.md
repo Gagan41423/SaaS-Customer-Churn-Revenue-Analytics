@@ -24,7 +24,6 @@ This project simulates a real-world SaaS data analytics workflow. It demonstrate
 ## 📊 Database Architecture & ERD
 The database (`SAS_Analytics`) consists of three normalized relational tables linked via foreign keys:
 
-![Database ERD](reports/erd.png) *(Note: Ensure your ERD image is saved in your reports folder)*
 
 * **`customers`** (Primary Table): Stores demographic and lifecycle attributes including `customer_id`, `signup_date`, `plan_type`, `monthly_fee`, `acquisition_cost`, and `churn_date`.
 * **`subscription`** (Relational Table): Tracks individual subscription details linked via foreign key constraint (`customer_id` referencing `customers`).
